@@ -8,29 +8,31 @@ import "2024-1e.txt" as example : Str
 parse = |s|
     s
     |> Str.split_on("\n")
-    |> List.map
+    |> List.map(
         |v|
             v
-            |> Str.split_on "   "
-            |> List.map |x| Str.to_u64(x) ?? 0
-    |> List.drop_last 1
-    |> List.walk
-        ([], [])
+            |> Str.split_on("   ")
+            |> List.map(|x| Str.to_u64(x) ?? 0),
+    )
+    |> List.drop_last(1)
+    |> List.walk(
+        ([], []),
         |(left, right), v|
             when v is
-                [a, b] -> (List.append left a, List.append right b)
-                _ -> (left, right)
+                [a, b] -> (List.append(left, a), List.append(right, b))
+                _ -> (left, right),
+    )
 
 part1 = |x|
     x
-    |> |(l, r)| (List.sort_asc l, List.sort_asc r)
-    |> |(l, r)| List.map2 l r Num.abs_diff
+    |> |(l, r)| (List.sort_asc(l), List.sort_asc(r))
+    |> |(l, r)| List.map2(l, r, Num.abs_diff)
     |> List.sum
 
 expect example |> parse |> part1 == 11
 
 alter : Result U64 _ -> Result U64 _
-alter = |value| value ?? 0 |> Num.add 1 |> Ok
+alter = |value| value ?? 0 |> Num.add(1) |> Ok
 
 part2 = |x|
     x
@@ -39,7 +41,7 @@ part2 = |x|
             l,
             List.walk(
                 r,
-                Dict.empty {},
+                Dict.empty({}),
                 |acc, elem|
                     Dict.update(acc, elem, alter),
             ),
@@ -56,9 +58,9 @@ part2 = |x|
 expect example |> parse |> part2 == 31
 
 main! = |_|
-    parsed = parse day1
+    parsed = parse(day1)
 
-    p1 = part1 parsed
-    p2 = part2 parsed
+    p1 = part1(parsed)
+    p2 = part2(parsed)
 
-    Stdout.line! "${Inspect.to_str p1}\n${Inspect.to_str p2}"
+    Stdout.line!("${Inspect.to_str(p1)}\n${Inspect.to_str(p2)}")
