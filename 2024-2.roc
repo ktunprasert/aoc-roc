@@ -2,7 +2,7 @@ app [main!] { pf: platform "https://github.com/roc-lang/basic-cli/releases/downl
 
 import pf.Stdout
 
-# import "2024-2.txt" as day1 : Str
+import "2024-2.txt" as input : Str
 import "2024-2e.txt" as example : Str
 
 parse = |s|
@@ -29,49 +29,10 @@ part1 = |lsts|
     |> List.map |(outside_range, all_neg, all_pos)| !outside_range && (all_neg || all_pos)
     |> List.count_if |x| x
 
+expect example |> parse |> part1 == 2
 
 main! = |_args|
-    _ = example |> parse |> part1
-    Stdout.write! "ok"
+    parsed = parse input
+    p1 = part1 parsed
 
-# part1 = |x|
-#     x
-#     |> |(l, r)| (List.sort_asc l, List.sort_asc r)
-#     |> |(l, r)| List.map2 l r Num.abs_diff
-#     |> List.sum
-
-# expect example |> parse |> part1 == 11
-
-# alter : Result U64 _ -> Result U64 _
-# alter = |value| value ?? 0 |> Num.add 1 |> Ok
-
-# part2 = |x|
-#     x
-#     |> |(l, r)|
-#         (
-#             l,
-#             List.walk(
-#                 r,
-#                 Dict.empty {},
-#                 |acc, elem|
-#                     Dict.update(acc, elem, alter),
-#             ),
-#         )
-#     |> |(nums, dict)|
-#         List.walk(
-#             nums,
-#             0,
-#             |acc, n|
-#                 v = Dict.get(dict, n) ?? 0
-#                 acc + n * v,
-#         )
-
-# expect example |> parse |> part2 == 31
-
-# main! = |_|
-#     parsed = parse day1
-
-#     p1 = part1 parsed
-#     p2 = part2 parsed
-
-#     Stdout.line! "${Inspect.to_str p1}\n${Inspect.to_str p2}"
+    Stdout.write! "${Inspect.to_str p1}"
