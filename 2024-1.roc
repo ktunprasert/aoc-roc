@@ -61,5 +61,4 @@ main! = |_|
     p1 = part1 parsed
     p2 = part2 parsed
 
-    _ = Stdout.line! "${Inspect.to_str p1}"
-    Stdout.line! "${Inspect.to_str p2}"
+    Stdout.line! "${Inspect.to_str p1}\n${Inspect.to_str p2}"
