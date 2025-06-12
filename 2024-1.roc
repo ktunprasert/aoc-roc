@@ -30,7 +30,7 @@ part1 = |x|
 expect example |> parse |> part1 == 11
 
 alter : Result U64 _ -> Result U64 _
-alter = |value| Ok((value ?? 0) + 1)
+alter = |value| value ?? 0 |> Num.add 1 |> Ok
 
 part2 = |x|
     x
