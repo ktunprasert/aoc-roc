@@ -2,7 +2,9 @@ app [main!] { pf: platform "https://github.com/roc-lang/basic-cli/releases/downl
 
 import pf.Stdout
 
-example = "3   4\n4   3\n2   5\n1   3\n3   9\n3   3\n"
+import "day1.txt" as day1: Str
+
+# example = "3   4\n4   3\n2   5\n1   3\n3   9\n3   3\n"
 
 parse = |s|
     s
@@ -24,10 +26,11 @@ parse = |s|
 main! = |_|
     # _ : List (List _)
     total =
-        parse example
+        # parse example
+        parse day1
         |> |(l, r)| (List.sort_asc l, List.sort_asc r)
         |> |(l, r)| List.map2 l r Num.abs_diff
         |> List.sum
-        # |> dbg
+    # |> dbg
 
     Stdout.write! "${Inspect.to_str total}"
