@@ -19,21 +19,20 @@ part1 = |lsts|
     lsts
     |> List.map |lst|
         List.walk_until
-            List.range({ start: At 0, end: Before (List.len(lst) - 1)})
+            List.range({ start: At 0, end: Before (List.len(lst) - 1) })
             []
             |acc, idx|
-                when Result.map2 (List.get lst idx) (List.get lst (idx+1)) |a, b| a - b is
-                  Ok v ->  List.append acc v |> Continue
-                  _ -> Break acc
-        # |> List.any |x| (x < 1) || (x > 3)
-    |> dbg
-
+                when Result.map2 (List.get lst idx) (List.get lst (idx + 1)) |a, b| a - b is
+                    Ok v -> List.append acc v |> Continue
+                    _ -> Break acc
+        |> |l| (List.any l |x| (Num.abs x < 1) or (Num.abs x > 3), List.all l Num.is_negative, List.all l Num.is_positive)
+    |> List.map |(outside_range, all_neg, all_pos)| !outside_range && (all_neg || all_pos)
+    |> List.count_if |x| x
 
 
 main! = |_args|
     _ = example |> parse |> part1
     Stdout.write! "ok"
-
 
 # part1 = |x|
 #     x
