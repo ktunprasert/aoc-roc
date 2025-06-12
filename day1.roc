@@ -3,8 +3,7 @@ app [main!] { pf: platform "https://github.com/roc-lang/basic-cli/releases/downl
 import pf.Stdout
 
 import "day1.txt" as day1: Str
-
-# example = "3   4\n4   3\n2   5\n1   3\n3   9\n3   3\n"
+import "day1e.txt" as example: Str
 
 parse = |s|
     s
@@ -21,16 +20,19 @@ parse = |s|
             when v is
                 [a, b] -> (List.append left a, List.append right b)
                 _ -> (left, right)
-# |> dbg
+
+part1 = |x|
+    x
+    |> |(l, r)| (List.sort_asc l, List.sort_asc r)
+    |> |(l, r)| List.map2 l r Num.abs_diff
+    |> List.sum
+
+
+expect example |> parse |> part1 == 11
 
 main! = |_|
-    # _ : List (List _)
-    total =
-        # parse example
-        parse day1
-        |> |(l, r)| (List.sort_asc l, List.sort_asc r)
-        |> |(l, r)| List.map2 l r Num.abs_diff
-        |> List.sum
-    # |> dbg
+    parsed = parse day1
 
-    Stdout.write! "${Inspect.to_str total}"
+    p1 = part1 parsed
+
+    Stdout.write! "${Inspect.to_str p1}"
