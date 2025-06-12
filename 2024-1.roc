@@ -32,41 +32,33 @@ expect example |> parse |> part1 == 11
 alter : Result U64 _ -> Result U64 _
 alter = |value| Ok((value ?? 0) + 1)
 
-walker : Dict U64 U64, U64 -> Dict U64 U64
-walker = |d, b| Dict.update(d, b, alter)
-
 part2 = |x|
     x
     |> |(l, r)|
         (
             l,
-            List.walk!(
+            List.walk(
                 r,
-                Dict.empty,
-                |a, _b|
-                    newd = a |> Dict.update(1, alter) |> dbg
-                    a,
-                # dbg(a)
-                # a
-                # walker,
-                # {},
-                # |d, n|
-                #     # _ = dbg(d)
-                #     # dbg(n)
-                #     Dict.update(d, 1, alter),
-                # Dict.update(
-                #     d,
-                #     n,
-                #     alter,
-                # ),
+                Dict.empty {},
+                |acc, elem|
+                    Dict.update(acc, elem, alter),
             ),
         )
+    |> |(nums, dict)|
+        List.walk(
+            nums,
+            0,
+            |acc, n|
+                v = Dict.get(dict, n) ?? 0
+                acc + n * v,
+        )
+
+expect example |> parse |> part2 == 31
 
 main! = |_|
     parsed = parse day1
 
-    _ = example |> parse |> part2
-
     p1 = part1 parsed
+    p2 = part2 parsed
 
     Stdout.write! "${Inspect.to_str p1}"
