@@ -2,8 +2,8 @@ app [main!] { pf: platform "https://github.com/roc-lang/basic-cli/releases/downl
 
 import pf.Stdout
 
-import "day1.txt" as day1: Str
-import "day1e.txt" as example: Str
+import "2024-1.txt" as day1: Str
+import "2024-1e.txt" as example: Str
 
 parse = |s|
     s
