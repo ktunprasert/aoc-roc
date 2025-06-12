@@ -31,35 +31,33 @@ part1 = |lsts|
 
 expect example |> parse |> part1 == 2
 
-trend : List I64 -> (Num a -> Bool)
-trend = |lst|
-    # Result.map2 (List.get lst 0) (List.get lst ((List.len lst) - 1)) |a, b| if a >= b then Num.is_positive else Num.is_negative
-    # |> Result.with_default (if List.sum lst >= 0 then Num.is_negative else Num.is_positive)
-    (if List.sum lst >= 0 then Num.is_negative else Num.is_positive)
-# (if List.sum lst >= (Num.to_i64(List.len lst) + 1) then Num.is_negative else Num.is_positive)
-# |> Result.with_default \_ -> Bool.true
+is_safe = |lst|
+    diffs = List.walk
+        List.range({ start: At 0, end: Before (List.len(lst) - 1) })
+        []
+        |acc, idx|
+            when Result.map2 (List.get lst idx) (List.get lst (idx + 1)) |a, b| a - b is
+                Ok v -> List.append acc v
+                _ -> acc
+
+    outside_range = List.any diffs |x| (Num.abs x < 1) or (Num.abs x > 3)
+    all_neg = List.all diffs Num.is_negative
+    all_pos = List.all diffs Num.is_positive
+
+    !outside_range and (all_neg or all_pos)
 
 part2 = |lsts|
     lsts
     |> List.map |lst|
-        List.walk
-            List.range({ start: At 0, end: Before (List.len(lst) - 1) })
-            []
-            |acc, idx|
-                when Result.map2 (List.get lst idx) (List.get lst (idx + 1)) |a, b| a - b is
-                    Ok v -> List.append acc v
-                    _ -> acc
-        |> |l|
-            when List.find_first_index l |n| (trend l)(n) or (Num.abs n < 1) or (Num.abs n > 3) is
-                Ok i if i == (List.len l - 1) -> (List.drop_last l 1, l)
-                Ok i ->
-                    Result.map2(List.get l i, List.get l (i + 1), |a, b| a + b)
-                    |> Result.map_ok |new| (List.drop_at l (i + 1) |> List.set i new, l)
-                    |> Result.with_default (l, l)
-
-                _ -> (l, l)
-        |> |(l, old)| List.any l |n| (Num.abs n < 1) or (Num.abs n > 3) or (trend old)(n)
-    |> List.count_if |x| !x
+        if is_safe lst then
+            Bool.true
+        else
+            # Try removing each element one by one
+            List.range({ start: At 0, end: Before (List.len lst) })
+            |> List.any |i|
+                List.drop_at lst i
+                |> is_safe
+    |> List.count_if |x| x
 
 expect example |> parse |> part2 == 4
 
